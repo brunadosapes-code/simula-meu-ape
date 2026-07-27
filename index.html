@@ -182,7 +182,7 @@
                 const dados = await resposta.json();
                 const r = dados.resumo;
 
-                // 1. CAPTURA GARANTIDA NA PLANILHA (VIA GET - SEM BLOQUEIO DO GOOGLE)
+                // 1. CAPTURA GARANTIDA VIA PING DE IMAGEM (Bypassa qualquer bloqueio do navegador)
                 try {
                     const params = new URLSearchParams({
                         nome: nome,
@@ -196,12 +196,10 @@
                         creditoTotal: "R$ " + r.poderDeCompraTotal.toLocaleString('pt-BR', {minimumFractionDigits: 2})
                     });
 
-                    await fetch(`${URL_PLANILHA_GOOGLE}?${params.toString()}`, {
-                        method: 'GET',
-                        mode: 'no-cors'
-                    });
+                    const ping = new Image();
+                    ping.src = `${URL_PLANILHA_GOOGLE}?${params.toString()}`;
                 } catch (errPlanilha) {
-                    console.log("Erro ao salvar planilha:", errPlanilha);
+                    console.log("Erro no disparo da planilha:", errPlanilha);
                 }
 
                 // 2. PREENCHIMENTO E GERAÇÃO DO PDF
