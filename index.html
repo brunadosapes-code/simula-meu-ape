@@ -182,23 +182,27 @@
                 const dados = await resposta.json();
                 const r = dados.resumo;
 
-                // 1. CAPTURA SILENCIOSA NA PLANILHA DO GOOGLE
-                fetch(URL_PLANILHA_GOOGLE, {
-                    method: 'POST',
-                    mode: 'no-cors',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
+                // 1. CAPTURA GARANTIDA NA PLANILHA (VIA GET - SEM BLOQUEIO DO GOOGLE)
+                try {
+                    const params = new URLSearchParams({
                         nome: nome,
                         whatsapp: whatsapp,
                         nascimento: nascimento.split('-').reverse().join('/'),
                         ocupacao: ocupacao,
-                        temFilhos: temFilhos,
-                        renda: rendaNum,
-                        financiamento: r.valorFinanciado,
-                        subsidio: r.subsidioTotal,
-                        creditoTotal: r.poderDeCompraTotal
-                    })
-                });
+                        temFilhos: temFilhos ? 'Sim' : 'Não',
+                        renda: "R$ " + rendaNum.toLocaleString('pt-BR', {minimumFractionDigits: 2}),
+                        financiamento: "R$ " + r.valorFinanciado.toLocaleString('pt-BR', {minimumFractionDigits: 2}),
+                        subsidio: "R$ " + r.subsidioTotal.toLocaleString('pt-BR', {minimumFractionDigits: 2}),
+                        creditoTotal: "R$ " + r.poderDeCompraTotal.toLocaleString('pt-BR', {minimumFractionDigits: 2})
+                    });
+
+                    await fetch(`${URL_PLANILHA_GOOGLE}?${params.toString()}`, {
+                        method: 'GET',
+                        mode: 'no-cors'
+                    });
+                } catch (errPlanilha) {
+                    console.log("Erro ao salvar planilha:", errPlanilha);
+                }
 
                 // 2. PREENCHIMENTO E GERAÇÃO DO PDF
                 document.getElementById('pdfNome').innerText = nome;
