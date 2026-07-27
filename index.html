@@ -7,110 +7,129 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <style> body { font-family: 'Inter', sans-serif; } </style>
+    <style> 
+        body { font-family: 'Inter', sans-serif; } 
+        .pdf-box { font-family: Arial, sans-serif; background: #ffffff; color: #1e293b; padding: 24px; width: 100%; box-sizing: border-box; }
+        .pdf-table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+        .pdf-table td { padding: 10px 8px; border-bottom: 1px solid #e2e8f0; font-size: 13px; }
+        .pdf-table tr.highlight { background-color: #eff6ff; font-weight: bold; }
+    </style>
 </head>
 <body class="bg-slate-100 min-h-screen flex items-center justify-center p-3 sm:p-6">
 
-    <div class="bg-white rounded-3xl shadow-2xl max-w-md w-full p-6 border border-slate-100">
+    <div class="bg-white rounded-3xl shadow-2xl max-w-md w-full p-6 border border-slate-100 flex flex-col justify-between min-h-[580px]">
         
-        <!-- Bloco do Perfil com Foto -->
-        <div class="flex items-center gap-4 pb-5 border-b border-slate-100 mb-6">
-            <img src="foto.jpg" 
-                 onerror="if (this.src.includes('foto.jpg')) { this.src='foto.png'; } else if (this.src.includes('foto.png')) { this.src='foto.jpeg'; } else { this.src='https://ui-avatars.com/api/?name=Bruna+Medeiros&background=2563eb&color=fff&size=128'; }" 
-                 alt="Bruna Medeiros" 
-                 class="w-14 h-14 rounded-full object-cover border-2 border-blue-600 shadow-sm flex-shrink-0">
-            <div>
-                <h1 class="text-lg font-bold text-slate-800 leading-snug">Bruna Medeiros</h1>
-                <p class="text-xs text-blue-600 font-semibold">Consultoria & Crédito Imobiliário</p>
+        <div>
+            <!-- Bloco do Perfil com Foto -->
+            <div class="flex items-center gap-4 pb-5 border-b border-slate-100 mb-6">
+                <img src="foto.jpg" 
+                     onerror="if (this.src.includes('foto.jpg')) { this.src='foto.png'; } else if (this.src.includes('foto.png')) { this.src='foto.jpeg'; } else { this.src='https://ui-avatars.com/api/?name=Bruna+Medeiros&background=2563eb&color=fff&size=128'; }" 
+                     alt="Bruna Medeiros" 
+                     class="w-14 h-14 rounded-full object-cover border-2 border-blue-600 shadow-sm flex-shrink-0">
+                <div>
+                    <h1 class="text-lg font-bold text-slate-800 leading-snug">Bruna Medeiros</h1>
+                    <p class="text-xs text-blue-600 font-semibold">Consultoria & Crédito Imobiliário</p>
+                </div>
             </div>
+
+            <div class="text-center mb-6">
+                <h2 class="text-xl font-bold text-slate-800">SimulaMeuApê</h2>
+                <p class="text-xs text-slate-500 mt-1">Descubra sua capacidade de financiamento em menos de 1 minuto.</p>
+            </div>
+
+            <!-- Formulário de Captação Enxuto -->
+            <form id="formSimulador" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">Seu Primeiro Nome</label>
+                    <input type="text" id="nome" required placeholder="Ex: Maria" 
+                        class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500 focus:outline-none text-slate-800 text-sm">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">Seu WhatsApp com DDD</label>
+                    <input type="tel" id="whatsapp" required placeholder="(11) 99999-9999" 
+                        class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500 focus:outline-none text-slate-800 text-sm">
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">Nascimento</label>
+                        <input type="date" id="nascimento" required 
+                            class="w-full px-3 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500 focus:outline-none text-slate-800 text-xs">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">Tem Filhos Menores?</label>
+                        <select id="filhos" class="w-full px-3 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500 text-slate-800 text-xs">
+                            <option value="sim">Sim</option>
+                            <option value="nao">Não</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">Ocupação / Renda</label>
+                        <select id="ocupacao" class="w-full px-3 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500 text-slate-800 text-xs">
+                            <option value="CLT">CLT / Registrado</option>
+                            <option value="Autônomo">Autônomo / Informal</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">Renda Familiar</label>
+                        <input type="text" id="renda" required placeholder="R$ 4.500" onkeyup="mascaraMoeda(this)"
+                            class="w-full px-3 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500 text-slate-800 font-semibold text-sm">
+                    </div>
+                </div>
+
+                <button type="submit" id="btnSimular"
+                    class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-4 rounded-xl shadow-lg shadow-emerald-100 transition transform active:scale-95 flex items-center justify-center gap-2 mt-2">
+                    <span>Gerar Minha Simulação em PDF</span>
+                </button>
+            </form>
         </div>
 
-        <div class="text-center mb-6">
-            <h2 class="text-xl font-bold text-slate-800">SimulaMeuApê</h2>
-            <p class="text-xs text-slate-500 mt-1">Descubra suas condições de financiamento em menos de 1 minuto.</p>
+        <!-- Rodapé do Site -->
+        <div class="mt-8 pt-4 border-t border-slate-100 text-center">
+            <p class="text-[11px] text-slate-400 leading-tight">
+                Simulação estimada • Sujeita à análise de crédito da Caixa Econômica Federal<br>
+                Consulte sempre um correspondente bancário credenciado
+            </p>
         </div>
 
-        <!-- Formulário de Captação -->
-        <form id="formSimulador" class="space-y-4">
+        <!-- Template do PDF de Proposta Comercial -->
+        <div id="pdfProposta" class="hidden pdf-box">
+            <div style="border-bottom: 2px solid #2563eb; padding-bottom: 12px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                    <h1 style="font-size: 20px; font-weight: bold; color: #1e3a8a; margin: 0;">Estudo de Viabilidade de Crédito</h1>
+                    <p style="font-size: 12px; color: #64748b; margin: 4px 0 0 0;">Consultora responsável: Bruna Medeiros</p>
+                </div>
+                <div>
+                    <span style="background-color: #dbeafe; color: #1e40af; font-size: 11px; font-weight: bold; padding: 4px 10px; border-radius: 20px;">SimulaMeuApê</span>
+                </div>
+            </div>
+
+            <div style="background-color: #f8fafc; padding: 12px 16px; border-radius: 8px; border: 1px solid #e2e8f0; margin-bottom: 20px;">
+                <h3 style="font-size: 12px; font-weight: bold; color: #334155; text-transform: uppercase; margin: 0 0 8px 0;">Ficha do Proponente</h3>
+                <p style="font-size: 13px; margin: 3px 0;"><strong>Primeiro Nome:</strong> <span id="pdfNome"></span></p>
+                <p style="font-size: 13px; margin: 3px 0;"><strong>Ocupação:</strong> <span id="pdfOcupacao"></span> | <strong>Tem Filhos Menores:</strong> <span id="pdfFilhos"></span></p>
+                <p style="font-size: 13px; margin: 3px 0;"><strong>Renda Familiar Declarada:</strong> R$ <span id="pdfRenda"></span></p>
+            </div>
+
             <div>
-                <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">Seu Nome Completo</label>
-                <input type="text" id="nome" required placeholder="Digite seu nome" 
-                    class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500 focus:outline-none text-slate-800 text-sm">
-            </div>
-
-            <div>
-                <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">Seu WhatsApp</label>
-                <input type="tel" id="whatsapp" required placeholder="(11) 99999-9999" 
-                    class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500 focus:outline-none text-slate-800 text-sm">
-            </div>
-
-            <div class="grid grid-cols-2 gap-3">
-                <div>
-                    <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">Nascimento</label>
-                    <input type="date" id="nascimento" required 
-                        class="w-full px-3 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500 focus:outline-none text-slate-800 text-xs">
-                </div>
-                <div>
-                    <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">Tem Dependente?</label>
-                    <select id="dependente" class="w-full px-3 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500 text-slate-800 text-xs">
-                        <option value="sim">Sim (Filho/Parentes)</option>
-                        <option value="nao">Não</option>
-                    </select>
-                </div>
-            </div>
-
-            <div class="grid grid-cols-2 gap-3">
-                <div>
-                    <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">Renda Familiar</label>
-                    <input type="text" id="renda" required placeholder="R$ 4.500" onkeyup="mascaraMoeda(this)"
-                        class="w-full px-3 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500 text-slate-800 font-semibold text-sm">
-                </div>
-                <div>
-                    <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">Valor do Imóvel</label>
-                    <input type="text" id="valorImovel" required placeholder="R$ 250.000" onkeyup="mascaraMoeda(this)"
-                        class="w-full px-3 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500 text-slate-800 font-semibold text-sm">
-                </div>
-            </div>
-
-            <button type="submit" id="btnSimular"
-                class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-4 rounded-xl shadow-lg shadow-emerald-100 transition transform active:scale-95 flex items-center justify-center gap-2 mt-2">
-                <span>Gerar Minha Simulação em PDF</span>
-            </button>
-        </form>
-
-        <!-- Template do PDF (Invisível na tela, apenas para download) -->
-        <div id="pdfProposta" class="hidden p-8 bg-white text-slate-800">
-            <div class="border-b-2 border-blue-600 pb-4 mb-6 flex justify-between items-center">
-                <div>
-                    <h1 class="text-2xl font-bold text-blue-900">Estudo de Viabilidade de Crédito</h1>
-                    <p class="text-sm text-slate-500">Elaborado por: Bruna Medeiros</p>
-                </div>
-                <div class="text-right">
-                    <span class="text-xs bg-blue-100 text-blue-800 font-bold px-2.5 py-1 rounded-full">SimulaMeuApê</span>
-                </div>
-            </div>
-
-            <div class="mb-6 bg-slate-50 p-4 rounded-xl border border-slate-200">
-                <h3 class="font-bold text-sm text-slate-700 uppercase mb-2">Dados do Proponente</h3>
-                <p class="text-sm"><strong>Nome:</strong> <span id="pdfNome"></span></p>
-                <p class="text-sm"><strong>Renda Familiar Declarada:</strong> R$ <span id="pdfRenda"></span></p>
-                <p class="text-sm"><strong>Valor Pretendido do Imóvel:</strong> R$ <span id="pdfValorImovel"></span></p>
-            </div>
-
-            <div class="mb-6">
-                <h3 class="font-bold text-sm text-slate-700 uppercase mb-3">Resultado da Análise Estimativa</h3>
-                <table class="w-full text-left text-sm border-collapse">
-                    <tr class="border-b"><td class="py-2 text-slate-600">Enquadramento Previsto:</td><td class="py-2 font-bold text-right" id="pdfModalidade"></td></tr>
-                    <tr class="border-b"><td class="py-2 text-slate-600">Prazo Máximo Amortização:</td><td class="py-2 font-bold text-right" id="pdfPrazo"></td></tr>
-                    <tr class="border-b"><td class="py-2 text-slate-600">1ª Parcela Estimada (Max):</td><td class="py-2 font-bold text-right" id="pdfParcela"></td></tr>
-                    <tr class="border-b"><td class="py-2 text-slate-600">Financiamento Estimado:</td><td class="py-2 font-bold text-right" id="pdfFinanciado"></td></tr>
-                    <tr class="border-b"><td class="py-2 text-slate-600">Estimativa de Subsídios (MCMV/SP):</td><td class="py-2 font-bold text-right text-emerald-600" id="pdfSubsidio"></td></tr>
-                    <tr class="bg-blue-50 font-bold"><td class="p-3 text-blue-900">Entrada Estimada Necessária:</td><td class="p-3 text-right text-blue-900" id="pdfEntrada"></td></tr>
+                <h3 style="font-size: 12px; font-weight: bold; color: #334155; text-transform: uppercase; margin: 0 0 8px 0;">Resultado da Análise Estimativa</h3>
+                <table class="pdf-table">
+                    <tr><td style="color: #64748b;">Enquadramento Previsto:</td><td style="font-weight: bold; text-align: right;" id="pdfModalidade"></td></tr>
+                    <tr><td style="color: #64748b;">Prazo Máximo Amortização:</td><td style="font-weight: bold; text-align: right;" id="pdfPrazo"></td></tr>
+                    <tr><td style="color: #64748b;">1ª Parcela Estimada (Max):</td><td style="font-weight: bold; text-align: right;" id="pdfParcela"></td></tr>
+                    <tr><td style="color: #64748b;">Financiamento Estimado Caixa:</td><td style="font-weight: bold; text-align: right;" id="pdfFinanciado"></td></tr>
+                    <tr><td style="color: #64748b;">Estimativa de Subsídio (MCMV):</td><td style="font-weight: bold; text-align: right; color: #059669;" id="pdfSubsidio"></td></tr>
+                    <tr class="highlight"><td style="color: #1e3a8a; padding: 12px 8px;">Poder de Compra Total (Financiamento + Subsídio):</td><td style="text-align: right; color: #1e3a8a; font-size: 15px;" id="pdfPoderCompra"></td></tr>
                 </table>
             </div>
 
-            <div class="mt-8 pt-4 border-t border-slate-200 text-xs text-slate-400 text-center">
-                * Análise preliminar baseada nas regras vigentes de crédito imobiliário. Sujeita a aprovação bancária e análise documental.
+            <div style="margin-top: 40px; padding-top: 12px; border-top: 1px solid #e2e8f0; font-size: 10px; color: #94a3b8; text-align: center;">
+                Simulação estimada • Sujeita à análise de crédito da Caixa Econômica Federal<br>
+                Consulte sempre um correspondente bancário credenciado
             </div>
         </div>
 
@@ -118,6 +137,7 @@
 
     <script>
         const SEU_WHATSAPP = "5511945504978";
+        const URL_PLANILHA_GOOGLE = "https://script.google.com/macros/s/AKfycbxQlfgdtmJGRhF6fLyfDQY73zryzKbG0DqyX6bauXJxenRD0pFIU6fKcWNcElgCvJ1f6A/exec";
 
         function mascaraMoeda(campo) {
             let v = campo.value.replace(/\D/g, "");
@@ -142,10 +162,10 @@
             const nome = document.getElementById('nome').value;
             const whatsapp = document.getElementById('whatsapp').value;
             const nascimento = document.getElementById('nascimento').value;
-            const dependente = document.getElementById('dependente').value === 'sim';
+            const temFilhos = document.getElementById('filhos').value === 'sim';
+            const ocupacao = document.getElementById('ocupacao').value;
             
             const rendaNum = parseFloat(document.getElementById('renda').value.replace(/\./g, '').replace(',', '.'));
-            const valorImovelNum = parseFloat(document.getElementById('valorImovel').value.replace(/\./g, '').replace(',', '.'));
 
             try {
                 const resposta = await fetch('/api/calcular', {
@@ -153,41 +173,78 @@
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
                         renda: rendaNum,
-                        valorImovel: valorImovelNum,
                         nascimento: nascimento,
-                        temDependente: dependente
+                        temFilhos: temFilhos,
+                        ocupacao: ocupacao
                     })
                 });
 
                 const dados = await resposta.json();
                 const r = dados.resumo;
 
+                // 1. CAPTURA SILENCIOSA NA PLANILHA DO GOOGLE
+                fetch(URL_PLANILHA_GOOGLE, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        nome: nome,
+                        whatsapp: whatsapp,
+                        nascimento: nascimento.split('-').reverse().join('/'),
+                        ocupacao: ocupacao,
+                        temFilhos: temFilhos,
+                        renda: rendaNum,
+                        financiamento: r.valorFinanciado,
+                        subsidio: r.subsidioTotal,
+                        creditoTotal: r.poderDeCompraTotal
+                    })
+                });
+
+                // 2. PREENCHIMENTO E GERAÇÃO DO PDF
                 document.getElementById('pdfNome').innerText = nome;
+                document.getElementById('pdfOcupacao').innerText = ocupacao;
+                document.getElementById('pdfFilhos').innerText = temFilhos ? 'Sim' : 'Não';
                 document.getElementById('pdfRenda').innerText = rendaNum.toLocaleString('pt-BR', {minimumFractionDigits: 2});
-                document.getElementById('pdfValorImovel').innerText = valorImovelNum.toLocaleString('pt-BR', {minimumFractionDigits: 2});
                 document.getElementById('pdfModalidade').innerText = r.modalidade;
                 document.getElementById('pdfPrazo').innerText = r.prazoMeses + " meses";
                 document.getElementById('pdfParcela').innerText = "R$ " + r.parcelaInicialEstimada.toLocaleString('pt-BR', {minimumFractionDigits: 2});
                 document.getElementById('pdfFinanciado').innerText = "R$ " + r.valorFinanciado.toLocaleString('pt-BR', {minimumFractionDigits: 2});
                 document.getElementById('pdfSubsidio').innerText = "R$ " + r.subsidioTotal.toLocaleString('pt-BR', {minimumFractionDigits: 2});
-                document.getElementById('pdfEntrada').innerText = "R$ " + r.entradaEstimada.toLocaleString('pt-BR', {minimumFractionDigits: 2});
+                document.getElementById('pdfPoderCompra').innerText = "R$ " + r.poderDeCompraTotal.toLocaleString('pt-BR', {minimumFractionDigits: 2});
 
                 const element = document.getElementById('pdfProposta');
                 element.classList.remove('hidden');
                 
                 await html2pdf().set({
-                    margin: 10,
-                    filename: `Simulacao_${nome.replace(/\s+/g, '_')}.pdf`,
+                    margin: 8,
+                    filename: `Simulacao_${nome}.pdf`,
                     image: { type: 'jpeg', quality: 0.98 },
-                    html2canvas: { scale: 2 },
+                    html2canvas: { scale: 2, useCORS: true },
                     jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
                 }).from(element).save();
 
                 element.classList.add('hidden');
 
-                const mensagemWA = `👋 *NOVA SIMULAÇÃO DO SITE (SimulaMeuApê)!*%0A%0A👤 *Nome:* ${nome}%0A📱 *WhatsApp:* ${whatsapp}%0A💰 *Renda Bruta:* R$ ${rendaNum.toLocaleString('pt-BR')}%0A🏠 *Valor Imóvel:* R$ ${valorImovelNum.toLocaleString('pt-BR')}%0A%0A📊 *Resultado Estimado:*%0A• *Entrada Aprox.:* R$ ${r.entradaEstimada.toLocaleString('pt-BR')}%0A• *Subsídio Estimado:* R$ ${r.subsidioTotal.toLocaleString('pt-BR')}%0A%0A_📄 O cliente acabou de baixar o PDF da proposta comercial no site!_`;
+                // 3. REDIRECIONAMENTO WHATSAPP
+                const mensagemWA = 
+`📋 *FICHA DE CADASTRO - SIMULA MEU APÊ*
 
-                window.location.href = `https://wa.me/${SEU_WHATSAPP}?text=${mensagemWA}`;
+👤 *Primeiro Nome:* ${nome}
+📱 *WhatsApp:* ${whatsapp}
+🎂 *Nascimento:* ${nascimento.split('-').reverse().join('/')}
+👶 *Tem Filhos Menores:* ${temFilhos ? 'Sim' : 'Não'}
+💼 *Ocupação:* ${ocupacao}
+💰 *Renda Familiar:* R$ ${rendaNum.toLocaleString('pt-BR', {minimumFractionDigits: 2})}
+
+📊 *RESULTADO DA SIMULAÇÃO:*
+• *Financiamento Aprox.:* R$ ${r.valorFinanciado.toLocaleString('pt-BR', {minimumFractionDigits: 2})}
+• *Subsídio Estimado:* R$ ${r.subsidioTotal.toLocaleString('pt-BR', {minimumFractionDigits: 2})}
+• *Poder de Compra Total:* R$ ${r.poderDeCompraTotal.toLocaleString('pt-BR', {minimumFractionDigits: 2})}
+• *1ª Parcela Estimada:* R$ ${r.parcelaInicialEstimada.toLocaleString('pt-BR', {minimumFractionDigits: 2})}
+
+📄 *Status:* O cliente acabou de baixar o PDF do estudo comercial!`;
+
+                window.location.href = `https://wa.me/${SEU_WHATSAPP}?text=${encodeURIComponent(mensagemWA)}`;
 
             } catch (err) {
                 alert("Ocorreu um erro ao calcular. Tente novamente.");
